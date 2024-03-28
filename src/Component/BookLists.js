@@ -36,7 +36,7 @@ function BookLists(props) {
                   }}
                   type="button"
                   style={{ color: 'red' }}
-                >
+                > 
                   <i className="fa-sharp fa-solid fa-trash" />
                 </button>
               </td>
