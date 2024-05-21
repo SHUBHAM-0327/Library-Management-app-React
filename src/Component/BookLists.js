@@ -2,7 +2,8 @@ import React from 'react';
 import './BookList.css';
 
 function BookLists(props) {
-  const { books, deleteBook } = props;
+  const { books, deleteBook, updateBook } = props;
+
   return (
     <div className="table">
       <div className="bookList">
@@ -17,7 +18,7 @@ function BookLists(props) {
               <th>Author Name</th>
               <th>Publish Date</th>
               <th>Price</th>
-              <th>Delete</th>
+              <th>Actions</th>
             </tr>
           </thead>
         )}
@@ -25,19 +26,24 @@ function BookLists(props) {
           {books.map((book) => (
             <tr key={book?.id}>
               <td>{book?.bookName}</td>
-              <td>{book?.authorName}</td>
               <td>{book?.bookDetail}</td>
+              <td>{book?.authorName}</td>
               <td>{book?.publishData}</td>
               <td>{book?.price}</td>
               <td>
                 <button
-                  onClick={() => {
-                    deleteBook(book.id);
-                  }}
+                  onClick={() => deleteBook(book.id)}
                   type="button"
                   style={{ color: 'red' }}
-                > 
+                >
                   <i className="fa-sharp fa-solid fa-trash" />
+                </button>
+                <button
+                  onClick={() => updateBook(book.id)}
+                  type="button"
+                  style={{ color: 'blue' }}
+                >
+                  Update
                 </button>
               </td>
             </tr>

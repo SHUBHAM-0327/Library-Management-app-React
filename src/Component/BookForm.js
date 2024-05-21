@@ -1,62 +1,90 @@
-import React, {useState } from 'react';
+import React, { useState } from 'react';
 import './BookForm.css';
-import Headers from './Headers'
+import Headers from './Headers';
 import BookLists from './BookLists';
 
-
-function BookForm(){
-
+function BookForm() {
   const [books, setBooks] = useState([]);
   const [enteredBookName, setEnteredBookName] = useState('');
-  const handleBookNameChange =(event) => {
-    setEnteredBookName(event.target.value);
-  }; 
-
   const [enteredBookDetail, setEnteredBookDetail] = useState('');
+  const [enteredAuthorName, setEnteredAuthorName] = useState('');
+  const [enteredPublishDate, setEnteredPublishDate] = useState('');
+  const [enteredPrice, setEnteredPrice] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [currentBookId, setCurrentBookId] = useState(null);
+
+  const handleBookNameChange = (event) => {
+    setEnteredBookName(event.target.value);
+  };
+
   const handleBookDetailChange = (event) => {
     setEnteredBookDetail(event.target.value);
   };
 
-  const [enteredAuthorName, setEnteredAuthorName] = useState('');
-  const handleAuthorNameChange =(event) => {
+  const handleAuthorNameChange = (event) => {
     setEnteredAuthorName(event.target.value);
   };
 
-  const [enteredPublishDate, setEnteredPublishDate] = useState('');
-  const handlePublishDateChange =(event) => {
+  const handlePublishDateChange = (event) => {
     setEnteredPublishDate(event.target.value);
   };
-  const [enteredPrice, setEnteredPrice] = useState('');
-  const handlePricechange =(event) => {
-    setEnteredPrice(event.target.value)
+
+  const handlePriceChange = (event) => {
+    setEnteredPrice(event.target.value);
   };
- 
-  
-  // to delete book list
+
   const deleteBook = (id) => {
     const filteredBooks = books.filter((element) => element.id !== id);
     setBooks(filteredBooks);
   };
 
-  const toStoreBookData = (event) => {
-    event.preventDefault();
-    const bookInfo = {
-      id: Math.floor(Math.random() * 100),
-      bookName: enteredBookName,
-      bookDetail: enteredBookDetail,
-      authorName: enteredAuthorName,
-      publishData: enteredPublishDate,
-      price: enteredPrice,
-    };
+  const updateBook = (id) => {
+    const bookToUpdate = books.find((book) => book.id === id);
+    setEnteredBookName(bookToUpdate.bookName);
+    setEnteredBookDetail(bookToUpdate.bookDetail);
+    setEnteredAuthorName(bookToUpdate.authorName);
+    setEnteredPublishDate(bookToUpdate.publishData);
+    setEnteredPrice(bookToUpdate.price);
+    setIsUpdating(true);
+    setCurrentBookId(id);
+  };
 
-    setBooks([...books, bookInfo]);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (isUpdating) {
+      const updatedBooks = books.map((book) =>
+        book.id === currentBookId
+          ? {
+              id: currentBookId,
+              bookName: enteredBookName,
+              bookDetail: enteredBookDetail,
+              authorName: enteredAuthorName,
+              publishData: enteredPublishDate,
+              price: enteredPrice,
+            }
+          : book
+      );
+      setBooks(updatedBooks);
+      setIsUpdating(false);
+      setCurrentBookId(null);
+    } else {
+      const bookInfo = {
+        id: Math.floor(Math.random() * 100),
+        bookName: enteredBookName,
+        bookDetail: enteredBookDetail,
+        authorName: enteredAuthorName,
+        publishData: enteredPublishDate,
+        price: enteredPrice,
+      };
+      setBooks([...books, bookInfo]);
+    }
+
     setEnteredBookName('');
     setEnteredBookDetail('');
     setEnteredAuthorName('');
     setEnteredPublishDate('');
     setEnteredPrice('');
-
-   
   };
 
   return (
@@ -64,14 +92,15 @@ function BookForm(){
       <div className="form">
         <Headers />
 
-        <form onSubmit={toStoreBookData}>
+        <form onSubmit={handleSubmit}>
           <div className="labelInput">
             <label className="label">Book Name : </label>
             <input
-             type="text"
-             value ={enteredBookName}
-             onChange={handleBookNameChange}
-             required />
+              type="text"
+              value={enteredBookName}
+              onChange={handleBookNameChange}
+              required
+            />
           </div>
 
           <div className="labelInput">
@@ -109,18 +138,20 @@ function BookForm(){
             <input
               type="number"
               value={enteredPrice}
-              onChange={handlePricechange}
+              onChange={handlePriceChange}
               required
             />
           </div>
           <button type="submit" className="addButton">
-            Add Book
+            {isUpdating ? 'Update Book' : 'Add Book'}
           </button>
         </form>
       </div>
-      <BookLists books={books} deleteBook={deleteBook} />
+      <BookLists books={books} deleteBook={deleteBook} updateBook={updateBook} />
     </div>
   );
 }
+
 export default BookForm;
+
 
